@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nasser-nginx-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nasser-nginx
+  template:
+    metadata:
+      labels:
+        app: nasser-nginx
+    spec:
+      containers:
+      - name: nasser-nginx
+        image: nasser1tarek/nasser-nginx:latest
+        ports:
+        - containerPort: 80

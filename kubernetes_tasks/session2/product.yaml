@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product
+  template:
+    metadata:
+      labels:
+        app: product
+    spec:
+      containers:
+      - name: product
+        image: hashicorp/http-echo
+       
+        args:
+          - "-text=Product Service Connected to DB"
+          - "-listen=:8080"
+       
+       
+        resources:
+          limits:
+           cpu: "0.5"
+           memory: "500Mi"
+
+        ports:
+         - containerPort: 8080

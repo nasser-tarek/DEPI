@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: advanced-node-affinity
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: disktype
+            operator: In
+            values:
+            - ssd
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 2
+        preference:
+          matchExpressions:
+          - key:  region
+            operator: In
+            values:
+            - us-east
+      - weight: 1
+        preference:
+          matchExpressions:
+          - key: region
+            operator: In
+            values:
+            - us-west
+  tolerations:
+  - key: "dedicated"
+    operator: "Equal"
+    value: "payments"
+    effect: "NoSchedule"
+  containers:
+  - name: advanced
+    image: nginx

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fe-config
+data:
+  index.html:
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>Frontend</title>
+    </head>
+    <body>
+      <h1>Welcome to the Frontend</h1>
+      <p>Product Service is available at <b>http://product-service:8080</b></p>
+      <p>Order Service is available at <b>http://order-service:8080</b></p>
+    </body>
+    </html>
