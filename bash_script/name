@@ -1,0 +1,6 @@
+#!/bin/bash
+
+
+
+name="nasser"
+echo "my name is $name"

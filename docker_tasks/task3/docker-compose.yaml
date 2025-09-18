@@ -1,0 +1,14 @@
+services:
+  redis:
+    image: redis
+    networks:
+     - FE_net 
+
+  nginx:
+    image: nginx
+    ports:
+      - "80:80"
+    networks:
+     - FE_net 
+networks:
+  FE_net:
