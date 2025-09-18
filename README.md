@@ -25,12 +25,12 @@ graph TD
 ```
 ⚡ Getting Started
 1. Clone the repo
+```bash
 git clone https://github.com/nasser-tarek/multi-service-docker-app.git
 cd multi-service-docker-app
-
+```
 2. Build and run with Docker Compose
+```bash
 docker-compose up -d --build
-
-3. Access the app
-
-Frontend: http://localhost:8080
+```
+3. Access the app on http://localhost:8080
