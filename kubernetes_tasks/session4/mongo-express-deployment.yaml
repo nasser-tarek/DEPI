@@ -3,6 +3,16 @@ kind: Namespace
 metadata:
   name: mongo-express
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-secret
+  namespace: mongo-express
+type: Opaque
+stringData:
+  MONGO_INITDB_ROOT_USERNAME: admin
+  MONGO_INITDB_ROOT_PASSWORD: admin123
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -23,10 +33,13 @@ spec:
         image: mongo-express:latest
         ports:
         - containerPort: 8081
-        envFrom:
-        - configMapRef:
-            name: mongo-express-config
         env:
+        - name: ME_CONFIG_MONGODB_SERVER
+          value: "mongodb-service.mongo-db.svc.cluster.local"
+        - name: ME_CONFIG_MONGODB_PORT
+          value: "27017"
+        - name: ME_CONFIG_MONGODB_ENABLE_ADMIN
+          value: "true"
         - name: ME_CONFIG_MONGODB_ADMINUSERNAME
           valueFrom:
             secretKeyRef:
@@ -37,18 +50,10 @@ spec:
             secretKeyRef:
               name: mongodb-secret
               key: MONGO_INITDB_ROOT_PASSWORD
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mongo-express-config
-  namespace: mongo-express
-data:
-  ME_CONFIG_MONGODB_SERVER: "mongodb-service.mongo-db.svc.cluster.local"
-  ME_CONFIG_MONGODB_PORT: "27017"
-  ME_CONFIG_MONGODB_ENABLE_ADMIN: "true"
-  ME_CONFIG_BASICAUTH_USERNAME: "admin"
-  ME_CONFIG_BASICAUTH_PASSWORD: "admin123"
+        - name: ME_CONFIG_BASICAUTH_USERNAME
+          value: "admin"
+        - name: ME_CONFIG_BASICAUTH_PASSWORD
+          value: "admin123"
 ---
 apiVersion: v1
 kind: Service
@@ -63,7 +68,7 @@ spec:
     - protocol: TCP
       port: 8081
       targetPort: 8081
-      nodePort: 30081 
+      nodePort: 30081
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -78,7 +83,7 @@ spec:
     - from:
         - namespaceSelector:
             matchLabels:
-              kubernetes.io/metadata.name: mongo-ex
+              kubernetes.io/metadata.name: mongo-express
       ports:
         - protocol: TCP
           port: 27017
