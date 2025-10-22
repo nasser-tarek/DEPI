@@ -1,9 +1,57 @@
-pipeline{
-stages{
-stage "build the image"{
-    steps{
+pipeline {
+    agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub')
+        DOCKERHUB_REPO = 'nasser1tarek/jenkins_lab'  
     }
-}
-}
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/nasser-tarek/DEPI.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh 'docker build -t $DOCKERHUB_REPO .'
+                }
+            }
+        }
+
+        stage('Login to Docker Hub') {
+            steps {
+                script {
+                    sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    sh '''
+                    docker push $DOCKERHUB_REPO
+                    '''
+                }
+            }
+        }
+
+        stage('Clean up') {
+            steps {
+                sh 'docker rmi $DOCKERHUB_REPO:latest || true'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Docker image pushed successfully: $DOCKERHUB_REPO:$IMAGE_TAG"
+        }
+        failure {
+            echo "❌ Build failed!"
+        }
+    }
 }
