@@ -45,13 +45,3 @@ pipeline {
             }
         }
     }
-
-    post {
-        success {
-            echo "✅ Docker image pushed successfully: $DOCKERHUB_REPO:$IMAGE_TAG"
-        }
-        failure {
-            echo "❌ Build failed!"
-        }
-    }
-}
